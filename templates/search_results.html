@@ -1,0 +1,11 @@
+{% extends "layouts/showcase.html" %}
+
+{% block grid_items %}
+    {% if results | length <= 0 %}
+        <p>No results.</p>
+    {% else %}
+        {% for item in results %}
+            {% include "layouts/partials/item_card.html" with context %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

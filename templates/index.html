@@ -1,0 +1,7 @@
+{% extends "layouts/showcase.html" %}
+
+{% block grid_items %}
+    {% for item in results %}
+        {% include "layouts/partials/item_card.html" with context %}
+    {% endfor %}
+{% endblock %}
