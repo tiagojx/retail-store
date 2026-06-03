@@ -1,23 +1,25 @@
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import os
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Form, Request, status
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from backend.commons.button import Button
 from backend.internal.database.db import DB
 from backend.internal.database.sql import SQL
-from backend.internal.handler import item_handler
+from backend.internal.product import product
 
 
 load_dotenv()
+
+db = DB()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Starting application...")
-    db = DB()
 
     try:
         conn_fmt = {"user": os.getenv("DB_USER"), "password": os.getenv("DB_PASSWD")}
@@ -45,7 +47,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def mainpage(request: Request, name: str = "Guest"):
-    results = await item_handler.get_all_items()
+    results = await product.get_all_items(db.conn)
 
     return templates.TemplateResponse(
         request=request,
@@ -61,7 +63,7 @@ async def mainpage(request: Request, name: str = "Guest"):
 
 @app.get("/search", response_class=HTMLResponse)
 async def search_box(request: Request, query: str):
-    results = await item_handler.select_item(query)
+    results = await product.select_item(query, db.conn)
 
     return templates.TemplateResponse(
         request=request,
@@ -73,3 +75,38 @@ async def search_box(request: Request, query: str):
             "top_label": "Search: " + query,
         },
     )
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    no_header = True
+    buttons = [
+        Button(id=1, label="New", redirect_to="dashboard/new_product"),
+        Button(id=2, label="Edit", redirect_to="dashboard/edit_product"),
+        Button(id=3, label="Delete", redirect_to="dashboard/edit_product?delete=on"),
+    ]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html",
+        context={
+            "title": "Dashboard | GMS Management System",
+            "no_header": no_header,
+            "buttons": buttons,
+        },
+    )
+
+
+@app.get("/dashboard/new_product")
+async def d_new_product():
+    return "Pretend there's something here."
+
+
+@app.get("/dashboard/edit_product")
+async def d_edit_product(delete: bool = False):
+    return f"Pretend there's something here. Delete mode: {delete}"
+
+
+@app.post("/redirect")
+async def redirect_handler(target: str = Form(...)):
+    return RedirectResponse(url=target, status_code=status.HTTP_303_SEE_OTHER)

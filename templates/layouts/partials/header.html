@@ -1,0 +1,22 @@
+<header class="font-sans text-base">
+    <div class="flex bg-secondary w-full">
+        <a href="/"><h1 class="p-2 text-lg text-white">Generic Merch Store</h1></a>
+        <div tabindex="0" class="grid grid-cols-1 grid-rows-1 p-2 w-full max-w-md focus:outline-accent focus:ring-1">
+            <input type="text" name="search_box_icon" placeholder="🔍| " disabled class="col-start-1 row-start-1 bg-white rounded-lg w-16 h-6" />
+            <div class="col-start-1 row-start-1 flex px-8">
+                <form method="get" action="/search" >
+                    <input type="text" id="search_query" name="query" placeholder="Find your new..." autocomplete="off" autocapitalize="none" class="bg-white rounded-lg w-90 focus:outline-none focus:ring-0" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="bg-muted">
+        <nav class="h-10">
+            <ul class="flex h-10 [&>li]:px-4 [&>li]:hover:bg-primary [&>li]:content-center">
+                <li><a href="">foo</a></li>
+                <li><a href="">bar</a></li>
+                <li><a href="">baz</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>

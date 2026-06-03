@@ -1,9 +1,9 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<h2 class="text-lg"><b>{{ top_label }}</b></h2>
-<div tabindex="1" class="grid grid-cols-3 md:grid-cols-6 gap-3">
-    {% block grid_items %}
-    {% endblock %}
-</div>
+    <h2 class="text-lg"><b>{{ top_label }}</b></h2>
+    <div tabindex="1" class="grid grid-cols-3 md:grid-cols-6 gap-3">
+        {% block grid_items %}
+        {% endblock %}
+    </div>
 {% endblock %}
