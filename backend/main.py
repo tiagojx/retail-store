@@ -81,9 +81,9 @@ async def search_box(request: Request, query: str):
 async def dashboard(request: Request):
     no_header = True
     buttons = [
-        Button(id=1, label="New", redirect_to="dashboard/new_product"),
-        Button(id=2, label="Edit", redirect_to="dashboard/edit_product"),
-        Button(id=3, label="Delete", redirect_to="dashboard/edit_product?delete=on"),
+        Button(id=1, label="New", redirect_to="dashboard/product/new"),
+        Button(id=2, label="Edit", redirect_to="dashboard/product/edit"),
+        Button(id=3, label="Delete", redirect_to="dashboard/product/edit?delete=on"),
     ]
 
     return templates.TemplateResponse(
@@ -97,12 +97,18 @@ async def dashboard(request: Request):
     )
 
 
-@app.get("/dashboard/new_product")
-async def d_new_product():
-    return "Pretend there's something here."
+@app.get("/dashboard/product/new", response_class=HTMLResponse)
+async def d_new_product(request: Request):
+    no_header = True
+
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard_new_product.html",
+        context={"title": "New -Product- | GMS Dashboard", "no_header": no_header},
+    )
 
 
-@app.get("/dashboard/edit_product")
+@app.get("/dashboard/product/edit")
 async def d_edit_product(delete: bool = False):
     return f"Pretend there's something here. Delete mode: {delete}"
 
