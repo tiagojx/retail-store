@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-    <h1 class="w-max p-2 mx-auto text-3xl font-bold">-Product-</h1>
+    <h1 id="#product" class="w-max p-2 mx-auto text-3xl font-bold">-Product-</h1>
     <div class="flex w-max flex-wrap gap-2 mx-auto">
         {% for button in buttons %}
             {% include "layouts/partials/dashboard_button.html" with context %}

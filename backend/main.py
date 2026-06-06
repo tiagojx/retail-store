@@ -104,7 +104,11 @@ async def d_new_product(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="dashboard_new_product.html",
-        context={"title": "New -Product- | GMS Dashboard", "no_header": no_header},
+        context={
+            "title": "New - Product | GMS Dashboard",
+            "no_header": no_header,
+            "redirect_to": "/dashboard#product",
+        },
     )
 
 

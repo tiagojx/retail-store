@@ -1,5 +1,14 @@
 {% extends "layouts/dashboard_entry.html" %}
 
 {% block entry %}
-    
+    <form class="p-6 flex-wrap mx-auto">
+        <label for="p_name">Name:</label>
+        <input type="text" name="p_name" value="">
+        <label for="p_price">Price:</label>
+        <input type="text" name="p_price" value="">
+        <label for="p_cover">Cover:</label>
+        <input type="text" name="p_cover" value="">
+        <label for="p_amount">Amount:</label>
+        <input type="text" name="p_amount" value="">
+    </form>
 {% endblock %}

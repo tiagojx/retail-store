@@ -2,7 +2,9 @@
 
 {% block content %}
     <div class="container">
-        <h1 class="p-2 mx-auto w-full text-lg">⬅️</h1>
+        <form method="post" action="/redirect" class="flex">
+            <button tabindex="0" type="submit" name="target" value={{ redirect_to }} class="flex-1 p-2 mx-auto w-full text-lg">⬅️</button>
+        </form>
         {% block entry %}
         {% endblock %}
     </div>
