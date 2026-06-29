@@ -1,10 +1,14 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-    <div class="container">
-        <form method="post" action="/redirect" class="flex">
-            <button tabindex="0" type="submit" name="target" value={{ redirect_to }} class="flex-1 p-2 mx-auto w-full text-lg">⬅️</button>
+    <div>
+        <form method="post" action="/redirect" style="display:inline;">
+            <input type="hidden" name="target" value={{ redirect_to }} >
+            <button type="submit" class="absolute top-2 left-2">⬅️</button>
         </form>
+    </div>
+        
+    <div>
         {% block entry %}
         {% endblock %}
     </div>

@@ -1,5 +1,6 @@
 from decimal import Decimal
-from typing import Optional
+from typing import Annotated, Literal, Optional
+from fastapi import Form
 import psycopg
 from pydantic import BaseModel, Field
 
@@ -36,6 +37,38 @@ class Product(BaseModel):
     )
     cover: str = ""
     available: bool = True
+
+
+class NewProdForm(BaseModel):
+    name: str
+    price: str
+    cover: str
+    amount: str
+
+
+class StatusHandler(BaseModel):
+    message: str
+    status_code: Literal[201, 500] = 201
+
+
+async def new_product(
+    data: Annotated[NewProdForm, Form()], db: Optional[psycopg.Connection] = None
+) -> StatusHandler:
+    if not db:
+        raise RuntimeError(
+            "Database connection is not open. Shall stabilish a connection first."
+        )
+
+    try:
+        with db.cursor() as cur:
+            insert_stmt = "INSERT INTO products (name, price, cover, amount) VALUES (%s, %s, %s, %s);"
+            cur.execute(insert_stmt, (data.name, data.price, data.cover, data.amount))
+            db.commit()
+        cur.close()
+    except Exception:
+        return StatusHandler(message="Internal server error", status_code=500)
+
+    return StatusHandler(message="New product added into database")
 
 
 async def select_item(

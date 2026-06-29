@@ -391,6 +391,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "psycopg", extra = ["binary"] },
     { name = "python-dotenv" },
+    { name = "python-multipart" },
 ]
 
 [package.metadata]
@@ -399,6 +400,7 @@ requires-dist = [
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.4" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
+    { name = "python-multipart", specifier = ">=0.0.29" },
 ]
 
 [[package]]

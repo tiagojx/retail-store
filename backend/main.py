@@ -1,15 +1,15 @@
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import os
-from fastapi import FastAPI, Form, Request, status
+from typing import Annotated
+from fastapi import FastAPI, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from backend.commons.button import Button
 from backend.internal.database.db import DB
-from backend.internal.database.sql import SQL
-from backend.internal.product import product
+from backend.internal.models import product
 
 
 load_dotenv()
@@ -79,7 +79,6 @@ async def search_box(request: Request, query: str):
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
-    no_header = True
     buttons = [
         Button(id=1, label="New", redirect_to="dashboard/product/new"),
         Button(id=2, label="Edit", redirect_to="dashboard/product/edit"),
@@ -91,23 +90,42 @@ async def dashboard(request: Request):
         name="dashboard.html",
         context={
             "title": "Dashboard | GMS Management System",
-            "no_header": no_header,
+            "no_header": True,
             "buttons": buttons,
         },
     )
 
 
 @app.get("/dashboard/product/new", response_class=HTMLResponse)
-async def d_new_product(request: Request):
-    no_header = True
-
+async def d_new_prod(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="dashboard_new_product.html",
         context={
             "title": "New - Product | GMS Dashboard",
-            "no_header": no_header,
+            "no_header": True,
             "redirect_to": "/dashboard#product",
+        },
+    )
+
+
+@app.post("/dashboard/product/new", response_class=HTMLResponse)
+async def submit_new_prod(
+    request: Request, data: Annotated[product.NewProdForm, Form()]
+):
+    results = await product.new_product(data, db.conn)
+    if results.status_code == 500:
+        raise HTTPException(status_code=500, detail=results.message)
+
+    results_message = results.message + ": '" + data.name + "'"
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard_new_product.html",
+        context={
+            "title": "New - Product | GMS Dashboard",
+            "no_header": True,
+            "redirect_to": "/dashboard#product",
+            "results_message": results_message,
         },
     )
 
