@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="relative pt-20"> 
+    <span class="h-max w-max absolute left-35 top-22 z-10">
+        <a href="/">⬅️</a>
+    </span>
+    <div class="flex relative w-275 h-300 mx-auto border rounded-xl pt-10 pb-10 z-0"> 
+        <div class="relative w-max h-max border rounded-xl left-40 top-0"> 
+            <img src="{{ product.cover }}" alt="Illustrative image" width="512" height="512" class="rounded-xl" />
+        </div>
+    </div>
+    <div class="absolute w-80 h-270 border rounded-xl left-220 top-30 pt-10 pl-6 pr-6 z-10">
+        <h1 class="text-3xl pb-2">{{ product.name }}</h1>
+        <h1 class="text-4xl"><b>${{ product.price }}</b></h1>
+        {% if product.amount < 1000 %}
+            <h1>{{ product.amount }} in stock</h1>
+        {% else %}
+            <h1>1000+ in stock</h1>
+        {% endif %}
+        <form class="w-full h-max pt-4 pb-2 border rounded-lg">
+            <button class="w-full h-full" type="submit">Buy now</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

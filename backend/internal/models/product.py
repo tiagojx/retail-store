@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Optional
 from fastapi import Form
 import psycopg
 from pydantic import BaseModel, Field
@@ -28,6 +28,7 @@ mock_db = [
 
 
 class Product(BaseModel):
+    id: int
     name: str = ""
     price: Decimal = Field(
         max_digits=10,
@@ -37,6 +38,7 @@ class Product(BaseModel):
     )
     cover: str = ""
     available: bool = True
+    amount: int = 1
 
 
 class NewProdForm(BaseModel):
@@ -48,7 +50,7 @@ class NewProdForm(BaseModel):
 
 class StatusHandler(BaseModel):
     message: str
-    status_code: Literal[201, 500] = 201
+    status_code: int
 
 
 async def new_product(
@@ -68,7 +70,42 @@ async def new_product(
     except Exception:
         return StatusHandler(message="Internal server error", status_code=500)
 
-    return StatusHandler(message="New product added into database")
+    return StatusHandler(message="New product added into database", status_code=201)
+
+
+async def get_item_by_id(p_id: int, db: Optional[psycopg.Connection] = None) -> Product:
+    results = []
+
+    if not db:
+        raise RuntimeError(
+            "Database connection is not open. Shall stabilish a connection first."
+        )
+
+    try:
+        with db.cursor() as cur:
+            cur.execute(
+                "SELECT name, price, cover, available, amount FROM products WHERE id = %s;",
+                (p_id,),
+            )
+            rows = cur.fetchall()
+
+            for row in rows:
+                price_fix = Decimal(str(row[1])) / Decimal("100")
+                results.append(
+                    Product(
+                        id=p_id,
+                        name=row[0],
+                        price=price_fix.quantize(Decimal("0.00")),
+                        cover=row[2],
+                        available=row[3],
+                        amount=row[4],
+                    )
+                )
+        cur.close()
+    except Exception as e:
+        print(e)
+
+    return results[0]
 
 
 async def select_item(
@@ -82,18 +119,19 @@ async def select_item(
         )
 
     with db.cursor() as cur:
-        cur.execute("SELECT name, price, cover, available FROM products;")
+        cur.execute("SELECT id, name, price, cover, available FROM products;")
         rows = cur.fetchall()
 
         for row in rows:
-            if search_query in row[0]:
-                price_fix = Decimal(str(row[1])) / Decimal("100")
+            if search_query in row[1]:
+                price_fix = Decimal(str(row[2])) / Decimal("100")
                 results.append(
                     Product(
-                        name=row[0],
+                        id=row[0],
+                        name=row[1],
                         price=price_fix.quantize(Decimal("0.00")),
-                        cover=row[2],
-                        available=row[3],
+                        cover=row[3],
+                        available=row[4],
                     )
                 )
     cur.close()
@@ -106,7 +144,12 @@ async def select_item_mock(search_query: str) -> list[Product]:
     for item in mock_db:
         if search_query in item["name"]:
             results.append(
-                Product(name=item["name"], price=item["price"], cover=item["cover"])
+                Product(
+                    id=item["id"],
+                    name=item["name"],
+                    price=item["price"],
+                    cover=item["cover"],
+                )
             )
 
     return results
@@ -120,18 +163,19 @@ async def get_all_items(db: Optional[psycopg.Connection] = None) -> list[Product
             "Database connect is not open. Shall stabilish a connection first."
         )
     with db.cursor() as cur:
-        cur.execute("SELECT name, price, cover, amount, available FROM products;")
+        cur.execute("SELECT id, name, price, cover, amount, available FROM products;")
         rows = cur.fetchall()
 
         for row in rows:
-            if row[3] > 0:
-                price_fix = Decimal(str(row[1])) / Decimal("100")
+            if row[4] > 0:
+                price_fix = Decimal(str(row[2])) / Decimal("100")
                 results.append(
                     Product(
-                        name=row[0],
+                        id=row[0],
+                        name=row[1],
                         price=price_fix.quantize(Decimal("0.00")),
-                        cover=row[2],
-                        available=row[4],
+                        cover=row[3],
+                        available=row[5],
                     )
                 )
     cur.close()
@@ -144,7 +188,12 @@ async def get_all_items_mock() -> list[Product]:
     for item in mock_db:
         if item["amount"] > 0:
             results.append(
-                Product(name=item["name"], price=item["price"], cover=item["cover"])
+                Product(
+                    id=item["id"],
+                    name=item["name"],
+                    price=item["price"],
+                    cover=item["cover"],
+                )
             )
 
     return results

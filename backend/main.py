@@ -61,6 +61,20 @@ async def mainpage(request: Request, name: str = "Guest"):
     )
 
 
+@app.get("/product/{p_id}", response_class=HTMLResponse)
+async def product_page(request: Request, p_id: int):
+    prod = await product.get_item_by_id(p_id, db.conn)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="product_page.html",
+        context={
+            "title": "'" + prod.name + "' | GMS",
+            "product": prod,
+        },
+    )
+
+
 @app.get("/search", response_class=HTMLResponse)
 async def search_box(request: Request, query: str):
     results = await product.select_item(query, db.conn)
