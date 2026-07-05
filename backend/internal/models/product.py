@@ -28,7 +28,7 @@ mock_db = [
 
 
 class Product(BaseModel):
-    id: int
+    id: Optional[int] = None
     name: str = ""
     price: Decimal = Field(
         max_digits=10,
@@ -39,6 +39,8 @@ class Product(BaseModel):
     cover: str = ""
     available: bool = True
     amount: int = 1
+    category: str = "General"
+    subcategory: Optional[str] = None
 
 
 class NewProdForm(BaseModel):
@@ -46,6 +48,8 @@ class NewProdForm(BaseModel):
     price: str
     cover: str
     amount: str
+    category: str
+    subcategory: str
 
 
 class StatusHandler(BaseModel):
@@ -63,8 +67,18 @@ async def new_product(
 
     try:
         with db.cursor() as cur:
-            insert_stmt = "INSERT INTO products (name, price, cover, amount) VALUES (%s, %s, %s, %s);"
-            cur.execute(insert_stmt, (data.name, data.price, data.cover, data.amount))
+            insert_stmt = "INSERT INTO products (name, price, cover, amount, category, subcategory) VALUES (%s, %s, %s, %s, %s, %s);"
+            cur.execute(
+                insert_stmt,
+                (
+                    data.name,
+                    data.price,
+                    data.cover,
+                    data.amount,
+                    data.category,
+                    data.subcategory,
+                ),
+            )
             db.commit()
         cur.close()
     except Exception:
@@ -84,7 +98,7 @@ async def get_item_by_id(p_id: int, db: Optional[psycopg.Connection] = None) -> 
     try:
         with db.cursor() as cur:
             cur.execute(
-                "SELECT name, price, cover, available, amount FROM products WHERE id = %s;",
+                "SELECT name, price, cover, available, amount, category, subcategory FROM products WHERE id = %s;",
                 (p_id,),
             )
             rows = cur.fetchall()
@@ -99,6 +113,8 @@ async def get_item_by_id(p_id: int, db: Optional[psycopg.Connection] = None) -> 
                         cover=row[2],
                         available=row[3],
                         amount=row[4],
+                        category=row[5],
+                        subcategory=row[6],
                     )
                 )
         cur.close()
@@ -106,6 +122,54 @@ async def get_item_by_id(p_id: int, db: Optional[psycopg.Connection] = None) -> 
         print(e)
 
     return results[0]
+
+
+async def get_item_by_category(
+    category: str = "General",
+    subcategory: Optional[str] = None,
+    db: Optional[psycopg.Connection] = None,
+) -> list[Product]:
+    results = []
+
+    if not db:
+        raise RuntimeError(
+            "Database connection is not open. Shall stabilish a connection first."
+        )
+
+    try:
+        with db.cursor() as cur:
+            if subcategory is not None:
+                cur.execute(
+                    "SELECT id, name, price, cover, available, amount, category, subcategory FROM products WHERE subcategory = %s;",
+                    (subcategory,),
+                )
+            else:
+                cur.execute(
+                    "SELECT id, name, price, cover, available, amount, category, subcategory FROM products WHERE category = %s;",
+                    (category,),
+                )
+
+            rows = cur.fetchall()
+
+            for row in rows:
+                price_fix = Decimal(str(row[2])) / Decimal("100")
+                results.append(
+                    Product(
+                        id=row[0],
+                        name=row[1],
+                        price=price_fix.quantize(Decimal("0.00")),
+                        cover=row[3],
+                        available=row[4],
+                        amount=row[5],
+                        category=row[6],
+                        subcategory=row[7],
+                    )
+                )
+        cur.close()
+    except Exception as e:
+        print(e)
+
+    return results
 
 
 async def select_item(
@@ -123,7 +187,7 @@ async def select_item(
         rows = cur.fetchall()
 
         for row in rows:
-            if search_query in row[1]:
+            if search_query.lower() in row[1].lower():
                 price_fix = Decimal(str(row[2])) / Decimal("100")
                 results.append(
                     Product(

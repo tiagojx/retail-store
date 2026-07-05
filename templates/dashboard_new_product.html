@@ -1,20 +1,42 @@
 {% extends "layouts/dashboard_entry.html" %}
 
 {% block entry %}
-    <form method="post" action="/dashboard/product/new" >
-        <label for="name">Name:</label>
-        <input type="text" name="name" value="{{ name or '' }}" required>
+    <div class="relative pt-10 left-32">
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-4" method="post" action="/dashboard/product/new" >
+            <div class="flex">
+                <label for="name">Name:</label>
+                <input type="text" name="name" value="{{ name or '' }}" required>
+            </div>
 
-        <label for="price">Price:</label>
-        <input type="text" name="price" value="{{ price or '' }}" required>
+            <div class="flex">
+                <label for="price">Price:</label>
+                <input type="text" name="price" value="{{ price or '' }}" required>
+            </div>
 
-        <label for="cover">Cover:</label>
-        <input type="text" name="cover" value="{{ cover or '' }}" required>
+            <div class="flex">
+                <label for="cover">Cover:</label>
+                <input type="text" name="cover" value="{{ cover or '' }}" required>
+            </div>
 
-        <label for="amount">Amount:</label>
-        <input type="number" name="amount" value="">
+            <div class="flex">
+                <label for="amount">Amount:</label>
+                <input type="number" name="amount" value="">
+            </div>
 
-        <button type="submit">Add</button>
-    </form>
+            <div class="flex">
+                <label for="category">Category:</label>
+                <input type="text" name="category" value="">
+            </div>
+
+            <div class="flex">
+                <label for="subcategory">Sub-category:</label>
+                <input type="text" name="subcategory" value="">
+            </div>
+
+            <div class="flex items-center justify-center w-max p-2 border rounded-lg">
+                <button class="w-full hover:cursor-pointer" type="submit">Add</button>
+            </div>
+        </form>
+    </div>
     <h2>{{ results_message }}</h2>
 {% endblock %}

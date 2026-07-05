@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import os
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import FastAPI, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -45,9 +45,28 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+async def alphabetical_sorting(og_list) -> list:
+    filtered = []
+
+    index = []
+    for item in og_list:
+        index.append(item.name)
+
+    sorted_index = sorted(index, key=str.lower)
+
+    for n in sorted_index:
+        for item in og_list:
+            if item.name == n:
+                filtered.append(item)
+
+    return filtered
+
+
 @app.get("/", response_class=HTMLResponse)
 async def mainpage(request: Request, name: str = "Guest"):
     results = await product.get_all_items(db.conn)
+
+    filtered = await alphabetical_sorting(results)
 
     return templates.TemplateResponse(
         request=request,
@@ -55,8 +74,9 @@ async def mainpage(request: Request, name: str = "Guest"):
         context={
             "title": "Generic Merch Store",
             "name": name,
-            "results": results,
+            "results": filtered,
             "top_label": "All products",
+            "is_index": True,
         },
     )
 
@@ -75,9 +95,34 @@ async def product_page(request: Request, p_id: int):
     )
 
 
+@app.get("/product/c/{category}/{subcategory}")
+@app.get("/product/c/{category}", response_class=HTMLResponse)
+async def product_by_category(
+    request: Request, category: str, subcategory: Optional[str] = None
+):
+    results = await product.get_item_by_category(category, subcategory, db.conn)
+
+    filtered = await alphabetical_sorting(results)
+
+    title = subcategory if subcategory else category
+    top_label = subcategory if subcategory else category
+
+    return templates.TemplateResponse(
+        request=request,
+        name="search_results.html",
+        context={
+            "title": title + " are in GMS!",
+            "results": filtered,
+            "top_label": top_label,
+        },
+    )
+
+
 @app.get("/search", response_class=HTMLResponse)
-async def search_box(request: Request, query: str):
+async def search_get(request: Request, query: str):
     results = await product.select_item(query, db.conn)
+
+    filtered = await alphabetical_sorting(results)
 
     return templates.TemplateResponse(
         request=request,
@@ -85,7 +130,7 @@ async def search_box(request: Request, query: str):
         context={
             "title": "The best '" + query + "' for you | GMS",
             "search_query": query,
-            "results": results,
+            "results": filtered,
             "top_label": "Search: " + query,
         },
     )

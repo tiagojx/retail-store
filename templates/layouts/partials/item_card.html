@@ -1,6 +1,8 @@
-<div class="relative max-w-4xl mx-auto p-5 hover:border">
-    <a href="/product/{{ item.id }}" class="absolute left-0 top-0 w-full h-full"></a>
-    <img src={{ item.cover }} alt="Illustrative image" width="128" height="128" />
-    <h3><b>{{ item.name }}</b></h3>
-    <p>${{ item.price }}</p>
+<div id="product-card" class="relative w-45 content-center p-5 border rounded-sm border-transparent hover:border-foreground hover:bg-gray-300 transition-all duration-75 hover:scale-110 z-0">
+    <a id="link-to-product" href="/product/{{ item.id }}" class="absolute left-0 top-0 w-full h-full z-20"></a>
+
+    <img id="card-cover" src={{ item.cover }} class="rounded-sm relative left-1 object-cover" alt="Illustrative image" width="128" height="128" />
+
+    <h3 id="card-title" class="overflow-ellipsis relative left-1 z-10"><b>{{ item.name }}</b></h3>
+    <p id="card-price" class="relative left-1 z-10">${{ item.price }}</p>
 </div>

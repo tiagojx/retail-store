@@ -1,26 +1,72 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<div class="relative pt-20"> 
-    <span class="h-max w-max absolute left-35 top-22 z-10">
-        <a href="/">⬅️</a>
+<div id="main-container" class="relative pt-20"> 
+    <span id="horizontal-bar" class="h-max w-268 absolute left-35 top-20 z-10">
+        <a id="go-back-btn" class="h-max w-max" href="#" onclick="history.back(); return false;">⬅️</a>
+
+        |<a class="h-max w-max text-secondary hover:bg-gray-300 hover:rounded-sm" href="/product/c/{{ product.category }}">
+            {{ product.category }}
+        </a>
+        
+        {% if product.subcategory %}
+            |<a class="h-max w-max text-secondary hover:bg-gray-300 hover:rounded-sm" href="/product/c/{{ product.category }}/{{ product.subcategory }}">
+                {{ product.subcategory }}
+            </a>
+        {% endif %}
+        
+        <hr class="w-full">
     </span>
-    <div class="flex relative w-275 h-300 mx-auto border rounded-xl pt-10 pb-10 z-0"> 
-        <div class="relative w-max h-max border rounded-xl left-40 top-0"> 
-            <img src="{{ product.cover }}" alt="Illustrative image" width="512" height="512" class="rounded-xl" />
+
+    <div id="horizontal-container" class="flex relative w-275 h-300 mx-auto bg-white border rounded-xl pt-10 pb-10 z-0"> 
+        <div id="product-cover" class="relative w-128 h-128 border rounded-xl left-30 top-0 z-20"> 
+            <div class="overflow-hidden flex items-center h-128 rounded-xl z-10">
+                <img src="{{ product.cover }}" 
+                     alt="Illustrative image" 
+                     width="512" height="512" 
+                     class="object-cover cursor-zoom-in transtition-transform duration-300 hover:scale-150" />
+            </div>
+        </div>
+
+        <div id="arrows-img-preview">
+            <div class="relative w-max h-max left-38 top-52 z-10">
+                <button class="border hover:cursor-pointer" type="">
+                    <h1 class="text-8xl text-gray-400">></h1>
+                </button>
+            </div>
+
+            <div class="relative w-max h-max right-120 top-30 z-10">
+                <button class="border hover:cursor-pointer" type="">
+                    <h1 class="text-8xl text-gray-400"><</h1>
+                </button>
+            </div>
         </div>
     </div>
-    <div class="absolute w-80 h-270 border rounded-xl left-220 top-30 pt-10 pl-6 pr-6 z-10">
-        <h1 class="text-3xl pb-2">{{ product.name }}</h1>
-        <h1 class="text-4xl"><b>${{ product.price }}</b></h1>
-        {% if product.amount < 1000 %}
-            <h1>{{ product.amount }} in stock</h1>
-        {% else %}
-            <h1>1000+ in stock</h1>
-        {% endif %}
-        <form class="w-full h-max pt-4 pb-2 border rounded-lg">
-            <button class="w-full h-full" type="submit">Buy now</button>
-        </form>
+
+    <div id="vertical-container" class="absolute w-80 h-270 bg-gray-50 border rounded-xl left-220 top-30 pt-10 pl-6 pr-6 z-10">
+        <div id="product-info">
+            <h1 class="text-3xl pb-2">{{ product.name }}</h1>
+            <h1 class="text-4xl"><b>${{ product.price }}</b></h1>
+            {% if product.amount < 1000 %}
+                <h1 class="pb-2">{{ product.amount }} in stock</h1>
+            {% else %}
+                <h1 class="pb-2">1000+ in stock</h1>
+            {% endif %}
+        </div>
+
+        <div id="buying-buttons">
+            <div id="buy-now-btn">
+                <form class="w-full h-max bg-white border rounded-lg text-xl transition-colors hover:bg-accent hover:font-bold">
+                    <button class="w-full h-full pt-2 pb-2 flex justify-center hover:cursor-pointer" type="submit">Buy now</button>
+                </form>
+            </div>
+
+            <div id="add-to-cart-btn" class="pt-1">
+                <form class="w-full h-max bg-white border rounded-lg text-xl transition-colors hover:bg-accent hover:font-bold">
+                    <button class="w-full h-full flex justify-center hover:cursor-pointer" type="submit">Add to cart+</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

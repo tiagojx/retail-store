@@ -1,9 +1,16 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-    <div class="mx-auto w-max pt-2 pl-2 pb-4">
-        <h2 class="text-lg"><b>{{ top_label }}</b></h2>
-        <div tabindex="1" class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4">
+    <div id="go-back-btn">
+        {% if not is_index %}
+            <a class="relative left-32 top-8 h-max w-max" href="#" onclick="history.back(); return false;">⬅️</a>
+        {% endif %}
+    </div>
+    
+    <div id="main-container" class="mx-auto w-max pt-2 pl-2 pb-4"> 
+        <h2 id="title" class="text-lg pb-4"><b>{{ top_label }}</b></h2>
+
+        <div id="showcase-grid" tabindex="1" class="grid grid-cols-3 md:grid-cols-5 gap-4">
             {% block grid_items %}
             {% endblock %}
         </div>

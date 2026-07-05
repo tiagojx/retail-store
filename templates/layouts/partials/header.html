@@ -4,9 +4,17 @@
         <div tabindex="0" class="grid grid-cols-1 grid-rows-1 p-2 w-full max-w-md focus:outline-accent focus:ring-1">
             <input type="text" name="search_box_icon" placeholder="🔍| " disabled class="col-start-1 row-start-1 bg-white rounded-lg w-16 h-6" />
             <div class="col-start-1 row-start-1 flex px-8">
-                <form method="get" action="/search" >
-                    <input type="text" id="search_query" name="query" placeholder="Find your new..." autocomplete="off" autocapitalize="none" class="bg-white rounded-lg w-90 focus:outline-none focus:ring-0" />
-                </form>
+                <div class="search-container">
+                    <form method="get" action="/search" >
+                        <input type="text" 
+                               id="search_query" 
+                               name="query" 
+                               placeholder="Find your new..." 
+                               autocomplete="off" 
+                               autocapitalize="none" 
+                               class="bg-white rounded-lg w-90 focus:outline-none focus:ring-0" />
+                    </form>
+                </div>
             </div>
         </div>
         <a href="/dashboard" class="absolute top-0 right-0">🛠️</a>
