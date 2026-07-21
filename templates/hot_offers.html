@@ -1,0 +1,5 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<center><h1 id="label" hx-get="/hot-offers" hx-swap="outerHTML" hx-trigger="load">HOT OFFER!! {{ time_remaining }}</h1></center>
+{% endblock %}

@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import os
-from typing import Annotated, Optional
-from fastapi import FastAPI, Form, HTTPException, Request, status
+import random
+import time
+from typing import Annotated, Optional, Union
+from fastapi import FastAPI, Form, HTTPException, Header, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -77,6 +79,74 @@ async def mainpage(request: Request, name: str = "Guest"):
             "results": filtered,
             "top_label": "All products",
             "is_index": True,
+        },
+    )
+
+
+### TESTING FUNCTIONS ###
+
+
+@app.get("/test-active-search", response_class=HTMLResponse)
+async def test_active_search(request: Request):
+    results = await product.get_all_items(db.conn)
+
+    filtered = await alphabetical_sorting(results)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="test_active_search.html",
+        context={
+            "title": "Active search testing",
+            "products": filtered,
+        },
+    )
+
+
+@app.post("/test-search", response_class=HTMLResponse)
+async def test_search_post(request: Request, search: Annotated[str, Form()] = ""):
+    if not search.strip():
+        results = await product.get_all_items(db.conn)
+    else:
+        results = await product.select_item(search, db.conn)
+
+    filtered = await alphabetical_sorting(results)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="layouts/partials/test_search_table.html",
+        context={
+            "products": filtered,
+        },
+    )
+
+
+@app.get("/hot-offers", response_class=HTMLResponse)
+def hot_offers_htmx(
+    request: Request, hx_request: Annotated[Union[str, None], Header()] = None
+):
+    time_remaining = 30
+
+    if hx_request:
+        time_remaining = random.randint(0, 100)
+        time.sleep(1)
+
+        return templates.TemplateResponse(
+            request=request,
+            name="hot_offers.html",
+            context={
+                "title": "Hot Offers | GMS",
+                "no_header": True,
+                "time_remaining": time_remaining,
+            },
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="hot_offers.html",
+        context={
+            "title": "Hot Offers | GMS",
+            "no_header": True,
+            "time_remaining": time_remaining,
         },
     )
 

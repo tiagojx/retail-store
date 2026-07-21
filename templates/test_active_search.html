@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<h1>Search:</h1>
+<input type="search" class="form-control"
+        name="search" placeholder="Your next..."
+        autocomplete="off"
+        hx-post="/test-search"
+        hx-trigger="input changed delay:500ms, load"
+        hx-target="#search-results">
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Amount</th>
+            <th>Available</th>
+        </tr>
+    </thead>
+    <tbody id="search-results">
+        {% include "layouts/partials/test_search_table.html" with context %}
+    </tbody>
+</table>
+{% endblock %}

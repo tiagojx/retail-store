@@ -183,7 +183,7 @@ async def select_item(
         )
 
     with db.cursor() as cur:
-        cur.execute("SELECT id, name, price, cover, available FROM products;")
+        cur.execute("SELECT id, name, price, cover, amount, available FROM products;")
         rows = cur.fetchall()
 
         for row in rows:
@@ -195,7 +195,8 @@ async def select_item(
                         name=row[1],
                         price=price_fix.quantize(Decimal("0.00")),
                         cover=row[3],
-                        available=row[4],
+                        amount=row[4],
+                        available=row[5],
                     )
                 )
     cur.close()
@@ -239,6 +240,7 @@ async def get_all_items(db: Optional[psycopg.Connection] = None) -> list[Product
                         name=row[1],
                         price=price_fix.quantize(Decimal("0.00")),
                         cover=row[3],
+                        amount=row[4],
                         available=row[5],
                     )
                 )
