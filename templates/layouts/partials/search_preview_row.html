@@ -1,0 +1,5 @@
+{% for item in products %}
+<tr class="hover:bg-accent">
+    <th class="text-left pl-2 pt-1 pb-1"><a class="flex w-full" href="/product/{{ item.id }}">{{ item.name }}<a></th>
+</tr>
+{% endfor %}

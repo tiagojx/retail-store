@@ -102,18 +102,17 @@ async def test_active_search(request: Request):
     )
 
 
-@app.post("/test-search", response_class=HTMLResponse)
-async def test_search_post(request: Request, search: Annotated[str, Form()] = ""):
-    if not search.strip():
-        results = await product.get_all_items(db.conn)
-    else:
-        results = await product.select_item(search, db.conn)
+@app.post("/search", response_class=HTMLResponse)
+async def search_post(request: Request, query: Annotated[str, Form()] = ""):
+    filtered = []
 
-    filtered = await alphabetical_sorting(results)
+    if query.strip():
+        results = await product.select_item(query, db.conn)
+        filtered = await alphabetical_sorting(results)
 
     return templates.TemplateResponse(
         request=request,
-        name="layouts/partials/test_search_table.html",
+        name="layouts/partials/search_preview_row.html",
         context={
             "products": filtered,
         },
