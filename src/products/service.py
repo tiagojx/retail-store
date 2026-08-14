@@ -1,43 +1,12 @@
 from decimal import Decimal
-from typing import Annotated, Optional
+
 from fastapi import Form
-import psycopg
-from pydantic import BaseModel, Field
 
-
-class Product(BaseModel):
-    id: Optional[int] = None
-    name: str = ""
-    price: Decimal = Field(
-        max_digits=10,
-        decimal_places=2,
-        default=Decimal("0"),
-        json_schema_extra={"examples": [19.99]},
-    )
-    cover: str = ""
-    available: bool = True
-    amount: int = 1
-    category: str = "General"
-    subcategory: Optional[str] = None
-
-
-class NewProdForm(BaseModel):
-    name: str
-    price: str
-    cover: str
-    amount: str
-    category: str
-    subcategory: str
-
-
-class StatusHandler(BaseModel):
-    message: str
-    status_code: int
+from models import Product
 
 
 async def new_product(
-    data: Annotated[NewProdForm, Form()], db: Optional[psycopg.Connection] = None
-) -> StatusHandler:
+    data: Annotated[NewProdForm, Form()], db):
     if not db:
         raise RuntimeError(
             "Database connection is not open. Shall stabilish a connection first."
@@ -60,12 +29,10 @@ async def new_product(
             db.commit()
         cur.close()
     except Exception:
-        return StatusHandler(message="Internal server error", status_code=500)
-
-    return StatusHandler(message="New product added into database", status_code=201)
+        raise HTTPException()
 
 
-async def get_item_by_id(p_id: int, db: Optional[psycopg.Connection] = None) -> Product:
+async def get_product_by_id(p_id: int, db) -> Product:
     results = []
 
     if not db:
@@ -102,10 +69,10 @@ async def get_item_by_id(p_id: int, db: Optional[psycopg.Connection] = None) -> 
     return results[0]
 
 
-async def get_item_by_category(
+async def get_product_by_category(
     category: str = "General",
-    subcategory: Optional[str] = None,
-    db: Optional[psycopg.Connection] = None,
+    subcategory: str | None = None,
+    db,
 ) -> list[Product]:
     results = []
 
@@ -150,8 +117,8 @@ async def get_item_by_category(
     return results
 
 
-async def select_item(
-    search_query: str, db: Optional[psycopg.Connection] = None
+async def search_product(
+    search_query: str, db
 ) -> list[Product]:
     results = []
 
@@ -182,13 +149,14 @@ async def select_item(
     return results
 
 
-async def get_all_items(db: Optional[psycopg.Connection] = None) -> list[Product]:
+async def get_all(db) -> list[Product]:
     results = []
 
     if not db:
         raise RuntimeError(
             "Database connect is not open. Shall stabilish a connection first."
         )
+    
     with db.cursor() as cur:
         cur.execute("SELECT id, name, price, cover, amount, available FROM products;")
         rows = cur.fetchall()
@@ -207,10 +175,5 @@ async def get_all_items(db: Optional[psycopg.Connection] = None) -> list[Product
                     )
                 )
     cur.close()
-
-    return results
-
-                )
-            )
 
     return results
