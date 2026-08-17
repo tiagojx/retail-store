@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class NewProdForm(BaseModel):
+class ProductSchema(BaseModel):
     name: str
     price: str
     cover: str

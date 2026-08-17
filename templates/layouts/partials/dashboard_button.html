@@ -1,5 +1,5 @@
 <div class="flex w-28 h-28 px-2 mb-4 text-base font-bold border-2 border-secondary rounded-sm bg-primary hover:border-accent hover:bg-secondary hover:text-white hover:shadow-md hover:w-32 hover:h-32 hover:rounded-md transition-all">
-    <form method="post" action="/redirect" class="flex flex-1">
-        <button tabindex={{ button.id }} type="submit" name="target" value={{ button.redirect_to }} class="flex-1 hover:underline hover:cursor-pointer">{{ button.label }}</button>
+    <form method="get" action={{ button.redirect_to }} class="flex flex-1">
+        <button tabindex={{ button.id }} type="submit" class="flex-1 hover:underline hover:cursor-pointer">{{ button.label }}</button>
     </form> 
 </div>

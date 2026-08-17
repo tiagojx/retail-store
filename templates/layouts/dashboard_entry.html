@@ -2,8 +2,7 @@
 
 {% block content %}
     <div>
-        <form method="post" action="/redirect" style="display:inline;">
-            <input type="hidden" name="target" value={{ redirect_to }} >
+        <form method="get" action="/dashboard#product" style="display:inline;">
             <button type="submit" class="absolute top-2 left-2">⬅️</button>
         </form>
     </div>

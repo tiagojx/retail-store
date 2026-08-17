@@ -1,0 +1,8 @@
+{% if message_log %}
+    {% set message, status_code = message_log %}
+    {% if status_code != 0 %}
+        <p class="text-lg text-red-500">{{ message }}</p>
+    {% else %}
+        <p class="text-lg text-green-400">{{ message }}</p>
+    {% endif %}
+{% endif %}

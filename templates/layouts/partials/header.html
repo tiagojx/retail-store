@@ -2,34 +2,7 @@
     <div class="flex bg-secondary w-full">
         <a href="/"><h1 class="p-2 text-lg text-white">Generic Merch Store</h1></a>
         <div tabindex="0" class="grid grid-cols-1 grid-rows-1 p-2 w-full max-w-102 focus:outline-accent focus:ring-1">
-            <input type="search" name="search_box_icon" 
-                   placeholder="🔍| " disabled id="off_search_bar"
-                   class="col-start-1 row-start-1 bg-white rounded-t-md rounded-b-md w-16 h-6">
-            <div class="col-start-1 row-start-1 flex px-8">
-                <div class="search-container">
-                    <form method="get" action="/search">
-                        <input type="search" 
-                               id="search_query"
-                               name="query"
-                               placeholder="Find your new..." 
-                               autocomplete="off" 
-                               autocapitalize="none"
-                               class="form-control bg-white rounded-t-md rounded-b-md w-90 focus:outline-none focus:ring-0"
-                               hx-on:input="this.value.trim() == '' ? this.classList.add('rounded-b-md') : this.classList.remove('rounded-b-md'); document.getElementById('off_search_bar').classList.toggle('rounded-b-md', this.value.trim() == '')"
-                               hx-post="/search"
-                               hx-trigger="input changed delay:500ms, search, load"
-                               hx-target="#search-preview">
-                    </form>
-                </div>
-            </div>
-            
-            <div class="z-50 fixed w-98 insert-0 my-6">
-                <table class="table bg-white rounded-b-sm w-full p-4">
-                    <tbody id="search-preview">
-                        {% include "layouts/partials/search_preview_row.html" with context %}
-                    </tbody>
-                </table>
-            </div>
+            {% include "layouts/partials/header_search_box.html" with context %}
         </div>
         <a href="/dashboard" class="absolute top-0 right-0">🛠️</a>
     </div>

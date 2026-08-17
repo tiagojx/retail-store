@@ -1,0 +1,71 @@
+{% extends "layouts/dashboard_entry.html" %}
+
+{% block entry %}
+    <div class="relative pt-10 left-20">
+        <form 
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 *:gap-4 *:items-center *:border-1 *:rounded-sm *:max-w-lg *:p-1" 
+            method="post" 
+            action="/dashboard/product/new" 
+            hx-on::after-request="if(event.detail.successful) this.reset()">
+
+            <div class="flex">
+                <label for="name"><b>Name: </b></label>
+                <input class="w-full" type="text" name="name" required>
+            </div>
+
+            <div class="flex">
+                <label for="price"><b>Price: </b></label>
+                <input class="w-full" type="text" name="price" required>
+            </div>
+
+            <div class="flex">
+                <label for="cover"><b>Cover: </b></label>
+                <input class="w-full" type="text" name="cover" required>
+            </div>
+
+            <div class="flex">
+                <label for="amount"><b>Amount: </b></label>
+                <input class="w-full" type="number" name="amount">
+            </div>
+
+            <div class="flex">
+                <label for="category"><b>Category: </b></label>
+                <input class="w-full" list="categories" name="category" placeholder="Select a category..." required>
+
+                <datalist id="categories">
+                    <option value="Casa & Decorações">
+                    <option value="Clothing">
+                    <option value="Electronics">
+                    <option value="Entertainment">
+                    <option value="Food & Drinks">
+                    <option value="Máquinas">
+                    <option value="Movies">
+                    <option value="Music">
+                </datalist>
+            </div>
+
+            <div class="flex">
+                <label for="subcategory"><b>Sub-category: </b></label>
+                <input class="w-full" type="text" name="subcategory">
+            </div>
+
+            <div class="flex items-center justify-center w-max p-2 border rounded-lg">
+                <button 
+                    class="w-full hover:cursor-pointer" 
+                    type="submit"
+                    hx-post="/dashboard/product/new"
+                    hx-trigger="click"
+                    hx-target="#log"><b>Submit</b>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <hr class="relative border-dotted border-t-3 top-10 p-4 max-w-120 mx-auto">
+
+    <h1 class="relative left-20 top-10 text-xl"><b>Log:</b></h1>
+    <div id="log" 
+        class="relative p-1 pl-2 top-10 left-20 max-w-2xl max-h-40 overflow-y-auto border-1 rounded-sm">
+        {% include "layouts/partials/dashboard_log.html" with context %}
+    </div>
+{% endblock %}
